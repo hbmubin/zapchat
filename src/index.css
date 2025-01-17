@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --deepPink: "#210b33";
+  --lightPink: "#ede9fe ";
+  --mediumPink: "#F59E0B";
+}
+body{
+  font-family: "Inter", serif;
+  @apply text-neutral-100
+}
+.text-small{
+  @apply text-sm text-neutral-500
+}
+.default-btn{
+  @apply  active:scale-95
+}
+
+.nav-btn-shadow{
+  box-shadow: 1px 1px 10px 10px #ddd6fe18;
+}
+.nav-top-shadow{
+  box-shadow:  0px -1px 8px 1px #100618;
+}
