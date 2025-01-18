@@ -1,34 +1,40 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 
 const TopUser = () => {
     const [open, setOpen] = useState(false);
     const [focus, setFocus] = useState(false);
+    const dropdownRef = useRef(null); 
 
-    const onBlur = () => {
-     window.addEventListener("click", (e) => {
-        if (e.target.closest(".menu-top")) return;
-        setOpen(false);
-     });
+  const handleClickOutside = (e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setOpen(false); 
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
     };
+  }, []);
 
     return (
-      <div className="bg-deepPink p-8">
+      <div className="bg-deepPink px-8 py-5 border-b border-neutral-800">
         <div className="flex items-center gap-2">
-          <div className="flex-grow flex items-center gap-3">
+          <div className="flex-grow flex items-center gap-3 cursor-pointer rounded-full active:bg-[#290d3d] py-1 pl-1 active:scale-[0.98] duration-200">
             <div className="size-10 rounded-full overflow-hidden">
               <img className="w-full" src="https://i.ibb.co.com/F3YXB6k/hasanul-Banna-Mubin.jpg" alt="" />
             </div>
             <div>Hasanul Banna Mubin</div>
           </div>
-          <div className="relative menu-top">
+          <div ref={dropdownRef} className="relative">
             <button onClick={() => setOpen(!open)} className="text-lightPink default-btn">
-              <BsThreeDots />
+              <BsThreeDots size={20} />
             </button>
-            {open && (<div
-              onBlur={onBlur}
-              className="absolute z-20 top-5 right-0 bg-deepPink px-4 py-2 border border-neutral-900 rounded-lg shadow-sm shadow-neutral-900 text-small duration-200"
+            {open && (<div              
+              className="absolute z-20 top-5 right-0 bg-deepPink px-4 py-2 border border-neutral-900 rounded-lg shadow-sm shadow-neutral-900 text-small duration-200 p-1"
             >
               <button
                 onClick={() => {

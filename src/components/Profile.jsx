@@ -1,10 +1,10 @@
 
-const Profile = () => {
+const Users = () => {
     return (
         <div className="text-white">
-            Profile
+            Users
         </div>
     );
 };
 
-export default Profile;
+export default Users;

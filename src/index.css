@@ -6,7 +6,7 @@
 :root {
   --deepPink: "#210b33";
   --lightPink: "#ede9fe ";
-  --mediumPink: "#F59E0B";
+  --mediumPink: "#a78bfa";
 }
 body{
   font-family: "Inter", serif;
@@ -25,3 +25,27 @@ body{
 .nav-top-shadow{
   box-shadow:  0px -1px 8px 1px #100618;
 }
+
+.side-view-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+
+
+
+/* Track */
+.side-view-container::-webkit-scrollbar-track {
+  background: var(--deepPink);
+}
+
+/* Handle */
+.side-view-container::-webkit-scrollbar-thumb {
+  background: #655274;
+}
+
+/* Handle on hover */
+.side-view-container::-webkit-scrollbar-thumb:hover {
+  background: #9177a6;
+}
+
+
