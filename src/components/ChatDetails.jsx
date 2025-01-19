@@ -3,6 +3,7 @@ import { BiSolidSend } from "react-icons/bi";
 import { BsFillHandThumbsUpFill, BsThreeDotsVertical } from "react-icons/bs";
 import { MdAddPhotoAlternate } from "react-icons/md";
 import UserDetails from "./UserDetails";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const messages = [
   {
@@ -159,7 +160,7 @@ const ChatDetails = () => {
           <div className="flex-grow">
             <div onClick={()=>setUserDetails(true)} className="flex w-fit items-center gap-3 active:scale-[0.997] duration-200 cursor-pointer">
               <div className="size-12 relative">
-                <img className="size-full object-cover rounded-full" src="https://random.imagecdn.app/300/300" alt="" />
+                <LazyLoadImage className="size-full object-cover rounded-full" src="https://random.imagecdn.app/300/300" alt="" />
                 <div className="absolute bottom-0 right-0 size-4 rounded-full bg-green-500 border-[3px] border-white"></div>
               </div>
               <div>

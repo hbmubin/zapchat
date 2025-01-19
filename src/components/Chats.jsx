@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { UtilitiesContext } from "../provider/UtilitiesProvider";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const chats = [
   {
@@ -105,7 +106,7 @@ const Chats = () => {
           <div className="flex-grow flex items-center pl-8 pr-3 py-4">
             <div className="flex-grow flex items-center gap-3">
               <div className="size-10 relative">
-                <img className="size-full object-cover rounded-full" src={chat.avatar} alt={`${chat.name}'s avatar`} />
+                <LazyLoadImage className="size-full object-cover rounded-full" src={chat.avatar} alt={`${chat.name}'s avatar`} />
                 <div className="absolute bottom-[1px] right-[1px] size-3 rounded-full bg-green-500 border-2 border-deepPink"></div>
               </div>
               <div>

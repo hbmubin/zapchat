@@ -1,11 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { FaMagnifyingGlass } from "react-icons/fa6";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import { UtilitiesContext } from "../provider/UtilitiesProvider";
 
 const TopUser = () => {
     const [open, setOpen] = useState(false);
     const [focus, setFocus] = useState(false);
     const dropdownRef = useRef(null); 
+    const { setMyProfile } = useContext(UtilitiesContext);
 
   const handleClickOutside = (e) => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -23,9 +26,9 @@ const TopUser = () => {
     return (
       <div className="bg-deepPink px-8 py-5 border-b border-neutral-800">
         <div className="flex items-center gap-2">
-          <div className="flex-grow flex items-center gap-3 cursor-pointer rounded-full active:bg-[#290d3d] py-1 pl-1 active:scale-[0.98] duration-200">
+          <div onClick={()=>setMyProfile(true)} className="flex-grow flex items-center gap-3 cursor-pointer rounded-full active:bg-[#290d3d] py-1 pl-1 active:scale-[0.98] duration-200">
             <div className="size-10 rounded-full overflow-hidden">
-              <img className="w-full" src="https://i.ibb.co.com/F3YXB6k/hasanul-Banna-Mubin.jpg" alt="" />
+              <LazyLoadImage className="w-full" src="https://i.ibb.co.com/F3YXB6k/hasanul-Banna-Mubin.jpg" alt="" />
             </div>
             <div>Hasanul Banna Mubin</div>
           </div>
@@ -36,7 +39,7 @@ const TopUser = () => {
             <div              
               className={`${
                 open ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-50 pointer-events-none"
-              } origin-top-right absolute z-20 top-5 right-0 bg-deepPink px-4 py-2 border border-neutral-900 rounded-lg shadow-sm shadow-neutral-900 text-small duration-200 p-1`}
+              } origin-top-right absolute z-20 top-5 right-0 bg-deepPink px-4 py-2 border border-neutral-900 rounded-lg shadow-sm shadow-neutral-900 text-small duration-200 p-1 text-nowrap flex flex-col gap-2 items-start`}
             >
               <button
                 onClick={() => {
@@ -44,7 +47,7 @@ const TopUser = () => {
                 }}
                 className="hover:text-neutral-400"
               >
-                Account
+                My Profile
               </button>
               <button
                 onClick={() => {
