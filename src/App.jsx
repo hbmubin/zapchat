@@ -1,7 +1,7 @@
 import Chats from "./components/Chats"
 import BottomNav from "./components/BottomNav"
 import TopUser from "./components/TopUser"
-import Users from "./components/Profile"
+import Users from "./components/Users"
 import ChatDetails from "./components/ChatDetails"
 import Welcome from "./components/Welcome"
 import { useContext } from "react"

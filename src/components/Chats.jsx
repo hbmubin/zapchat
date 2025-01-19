@@ -81,7 +81,7 @@ const Chats = () => {
   const dropdownRef = useRef(null);
 
   const handleOption = (e, chatId) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     setOpenDropdown((prev) => (prev === chatId ? null : chatId));
   };
 
@@ -101,19 +101,11 @@ const Chats = () => {
   return (
     <>
       {chats.map((chat) => (
-        <div
-          onClick={() => setContent("chatDetails")}
-          key={chat.id}
-          className="flex group items-center border-b border-neutral-800 cursor-pointer hover:bg-[#2b0e41]"
-        >
+        <div onClick={() => setContent("chatDetails")} key={chat.id} className="flex group items-center border-b border-neutral-800 cursor-pointer hover:bg-[#2b0e41]">
           <div className="flex-grow flex items-center pl-8 pr-3 py-4">
             <div className="flex-grow flex items-center gap-3">
               <div className="size-10 relative">
-                <img
-                  className="size-full object-cover rounded-full"
-                  src={chat.avatar}
-                  alt={`${chat.name}'s avatar`}
-                />
+                <img className="size-full object-cover rounded-full" src={chat.avatar} alt={`${chat.name}'s avatar`} />
                 <div className="absolute bottom-[1px] right-[1px] size-3 rounded-full bg-green-500 border-2 border-deepPink"></div>
               </div>
               <div>
@@ -123,9 +115,7 @@ const Chats = () => {
             </div>
             <div className="flex flex-col items-end gap-1">
               <div className="text-small">{chat.time}</div>
-              <div className="text-xs bg-pink-400 size-4 inline-flex justify-center items-center p-1 leading-none rounded-full">
-                1
-              </div>
+              <div className="text-xs bg-pink-400 size-4 inline-flex justify-center items-center p-1 leading-none rounded-full">1</div>
             </div>
           </div>
           <div className="relative">
@@ -136,9 +126,12 @@ const Chats = () => {
             >
               <BsThreeDotsVertical size={22} />
             </button>
-
-            {openDropdown === chat.id && (
-              <div ref={dropdownRef} className="absolute z-20 top-5 right-0 bg-deepPink px-4 py-2 border border-neutral-900 rounded-lg shadow-sm shadow-neutral-900 text-small duration-200 p-1 text-nowrap flex flex-col gap-2 items-start">
+            <div
+                ref={dropdownRef}
+                className={`${
+                  openDropdown === chat.id ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-50 pointer-events-none"
+                } origin-top-right absolute z-20 top-5 right-0 bg-deepPink px-4 py-2 border border-neutral-900 rounded-lg shadow-sm shadow-neutral-900 text-small duration-200 p-1 text-nowrap flex flex-col gap-2 items-start`}
+              >
                 <button
                   onClick={() => {
                     console.log(`Add friend clicked for chat ${chat.id}`);
@@ -156,7 +149,6 @@ const Chats = () => {
                   Delete chat
                 </button>
               </div>
-            )}
           </div>
         </div>
       ))}

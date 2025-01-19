@@ -33,8 +33,10 @@ const TopUser = () => {
             <button onClick={() => setOpen(!open)} className="text-lightPink default-btn">
               <BsThreeDots size={20} />
             </button>
-            {open && (<div              
-              className="absolute z-20 top-5 right-0 bg-deepPink px-4 py-2 border border-neutral-900 rounded-lg shadow-sm shadow-neutral-900 text-small duration-200 p-1"
+            <div              
+              className={`${
+                open ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-50 pointer-events-none"
+              } origin-top-right absolute z-20 top-5 right-0 bg-deepPink px-4 py-2 border border-neutral-900 rounded-lg shadow-sm shadow-neutral-900 text-small duration-200 p-1`}
             >
               <button
                 onClick={() => {
@@ -52,7 +54,7 @@ const TopUser = () => {
               >
                 Logout
               </button>
-            </div>)}
+            </div>
           </div>
         </div>
         <div className="flex items-center bg-[#2c0f44] rounded-full py-2.5 mt-4">
