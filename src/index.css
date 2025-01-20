@@ -41,6 +41,7 @@ body{
 /* Handle */
 .side-view-container::-webkit-scrollbar-thumb {
   background: #655274;
+  border-radius: 2px;
 }
 
 /* Handle on hover */
@@ -50,4 +51,23 @@ body{
 
 
 
+
+
+
+.myProfile-des::-webkit-scrollbar {
+  width: 8px;
+}
+
+.myProfile-des::-webkit-scrollbar-track {
+  background: var(--deepPink);
+}
+
+.myProfile-des::-webkit-scrollbar-thumb {
+  background: #655274;
+  border-radius: 2px;
+}
+
+.myProfile-des::-webkit-scrollbar-thumb:hover {
+  background: #9177a6;
+}
 

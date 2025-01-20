@@ -7,7 +7,7 @@ const UtilitiesProvider = ({ children }) => {
 
   const [sideView, setSideView] = useState('chats')
   const [content, setContent] = useState('welcome')
-  const [myProfile, setMyProfile] = useState(true);
+  const [myProfile, setMyProfile] = useState(false);
   
   const utilities = {sideView, setSideView, content, setContent, myProfile, setMyProfile};
   return (

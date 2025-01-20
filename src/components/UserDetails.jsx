@@ -7,7 +7,7 @@ const UserDetails = ({setUserDetails}) => {
     return (
         <div className="h-full bg-lightPink text-neutral-700 overflow-y-auto">
             <div className="p-4 flex items-center gap-3 sticky top-0 bg-lightPink">
-                <div className="cursor-pointer" onClick={()=>setUserDetails(false)}><IoClose size={26} /></div>
+                <div className="cursor-pointer default-btn" onClick={()=>setUserDetails(false)}><IoClose size={26} /></div>
                 <div className="text-lg font-medium">User info</div>
             </div>
             <div className="flex flex-col items-center py-10 border-b border-b-violet-200">
