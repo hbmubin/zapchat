@@ -239,7 +239,7 @@ const ChatDetails = () => {
           </div>
         </div>
       </div>
-      <div className={`${userDetails ? 'w-4/12' : 'w-0'} duration-200 overflow-hidden`}>
+      <div className={`${userDetails ? 'w-4/12 min-w-44' : 'w-0'} duration-200 overflow-hidden`}>
         <UserDetails setUserDetails={setUserDetails}/>
       </div>
     </div>

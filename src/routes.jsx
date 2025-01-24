@@ -3,12 +3,13 @@ import App from "./App";
 import ErrorPage from "./pages/ErrorPage";
 import Login from "./pages/login";
 import Register from "./pages/Register";
+import PrivateRoute from "./PrivateRoute";
 
 
 const router = createBrowserRouter([
     {
       path: "/",
-      element: <App></App>,
+      element: <PrivateRoute><App /></PrivateRoute>,
       errorElement: <ErrorPage />
     },
     {

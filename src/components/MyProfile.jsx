@@ -6,9 +6,12 @@ import { TbEdit } from "react-icons/tb";
 import { ImCheckmark } from "react-icons/im";
 import { MdDelete, MdLockReset } from "react-icons/md";
 import { CgLogOut } from "react-icons/cg";
+import { AuthContext } from "../provider/AuthProvider";
+import Swal from "sweetalert2";
 
 const MyProfile = () => {
   const { setMyProfile } = useContext(UtilitiesContext);
+  const {logOut} = useContext(AuthContext)
   const [nameEdit, setNameEdit] = useState(false);
   const [aboutEdit, setAboutEdit] = useState(false);
   const textAreaRef = useRef();
@@ -19,6 +22,23 @@ const MyProfile = () => {
       textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
     }
   }, []);
+
+  const handleLogOut =()=>{
+        logOut()
+        .then(()=>{
+          Swal.fire({
+                    title: "Logout successfully!",
+                    icon: "success",
+                  });
+        })
+        .catch((error) => {
+          console.error(error);
+          Swal.fire({
+            title: error.code,
+            icon: 'error',
+          });
+        });
+      }
 
   return (
     <div className="bg-deepPink h-full overflow-hidden">
@@ -70,7 +90,7 @@ const MyProfile = () => {
             <MdLockReset size={20} />
             Reset password
           </div>
-          <div className="text-amber-500 flex items-center gap-2 cursor-pointer">
+          <div onClick={handleLogOut} className="text-amber-500 flex items-center gap-2 cursor-pointer">
             <CgLogOut size={20} />
             Log out
           </div>

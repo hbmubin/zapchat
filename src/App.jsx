@@ -7,13 +7,16 @@ import Welcome from "./components/Welcome";
 import { useContext } from "react";
 import { UtilitiesContext } from "./provider/UtilitiesProvider";
 import MyProfile from "./components/MyProfile";
+import useWidth from "./hooks/useWidth";
 
 function App() {
   const { sideView, content, myProfile } = useContext(UtilitiesContext);
+  const isSmall = useWidth();
+  
 
   return (
     <div className="flex h-screen">
-      <div className="side-view w-3/12 flex flex-col h-full">
+      <div className={` side-view w-96 flex flex-col h-full`}>
         {myProfile ? (
           <MyProfile />
         ) : (
@@ -28,7 +31,7 @@ function App() {
           </>
         )}
       </div>
-      {content === "welcome" && <Welcome />}
+      {content === "welcome" && !isSmall && <Welcome />}
       {content === "chatDetails" && <ChatDetails />}
     </div>
   );

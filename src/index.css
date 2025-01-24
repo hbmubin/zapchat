@@ -25,7 +25,9 @@ body{
 .default-btn{
   @apply  active:scale-95
 }
-
+.captcha canvas{
+  @apply rounded mb-2
+}
 .nav-btn-shadow{
   box-shadow: 1px 1px 10px 10px #ddd6fe18;
 }
