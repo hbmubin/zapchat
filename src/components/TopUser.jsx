@@ -55,7 +55,7 @@ const TopUser = () => {
         <div className="flex items-center gap-2">
           <div onClick={()=>setMyProfile(true)} className="flex-grow flex items-center gap-3 cursor-pointer rounded-full active:bg-[#290d3d] py-1 pl-1 active:scale-[0.98] duration-200">
             <div className="size-10 rounded-full overflow-hidden">
-              <LazyLoadImage className="w-full" src={user?.photoUrl || userMan} alt={user.displayName} />
+              <LazyLoadImage className="w-full" src={user?.photoURL || userMan} alt={user.displayName} />
             </div>
             <div>{user?.displayName}</div>
           </div>

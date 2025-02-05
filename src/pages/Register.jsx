@@ -10,6 +10,8 @@ import { FcGoogle } from "react-icons/fc";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../provider/AuthProvider";
 import { BounceLoader } from "react-spinners";
+import { sendEmailVerification } from "firebase/auth";
+// import userMan from '../assets/image/user-man.png'
 
 const Register = () => {
   const { createUser, user, updateUserProfile, sigInGoogle } = useContext(AuthContext);
@@ -49,7 +51,9 @@ const Register = () => {
     if (validateCaptcha(captcha)) {
       createUser(data.email, data.password)
         .then((result) => {
-          updateUserProfile(data.name, null)
+          sendEmailVerification(result.user)
+          .then(()=>{
+            updateUserProfile(data.name, null)
             .then(() => {
               reset();
               navigate("/");
@@ -72,6 +76,18 @@ const Register = () => {
                 timer: 1500,
               });
             });
+          })
+          .catch(error=>{
+            console.log(error);
+          setOnSubmitting(false);
+          Swal.fire({
+            title: "Registered successfully!",
+            icon: "success",
+            background: "#ede9fe",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          })
         })
         .catch((error) => {
           console.log(error);

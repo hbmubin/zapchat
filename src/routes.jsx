@@ -4,6 +4,8 @@ import ErrorPage from "./pages/ErrorPage";
 import Login from "./pages/login";
 import Register from "./pages/Register";
 import PrivateRoute from "./PrivateRoute";
+import VerifyEmail from "./pages/VerifyEmail";
+import Forget from "./pages/Forget";
 
 
 const router = createBrowserRouter([
@@ -19,6 +21,14 @@ const router = createBrowserRouter([
     {
       path: '/register',
       element: <Register />
+    },
+    {
+      path: '/forget-password',
+      element: <Forget />
+    },
+    {
+      path: '/verify-email',
+      element: <VerifyEmail />
     }
   ]);
 

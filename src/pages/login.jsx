@@ -125,6 +125,9 @@ const Login = () => {
               </div>
             </div>
             {errors.password && <div className="text-sm text-amber-600 pt-1">Password is required</div>}
+            <div className="mt-1">
+            <Link to='/forget-password' className=" text-sm text-blue-600 hover:underline duration-100 cursor-pointer">Forget password</Link>
+            </div>
           </div>
           <div className="">
             <button type="submit" className={` active:scale-[0.98] flex justify-center w-full bg-deepPink py-2 rounded-md`}>

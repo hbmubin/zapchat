@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { app } from "../firebase/firebase.config";
-import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, getAuth, GoogleAuthProvider, onAuthStateChanged, reauthenticateWithCredential, reauthenticateWithPopup, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
 
 
 export const AuthContext = createContext(null)
@@ -38,7 +38,36 @@ const AuthProvider = ({children}) => {
         setLoading(true)
         return signOut(auth)
     }
-    
+
+    const resetPassword= (email)=>{
+        return sendPasswordResetEmail(auth, email)
+    }
+
+    const reauthenticateAndDeleteUser = (password) => {
+        setLoading(true);
+      
+        const credential = EmailAuthProvider.credential(user.email, password);
+      
+        return reauthenticateWithCredential(user, credential)
+          .then(() => {
+            return deleteUser(user);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      };
+
+      const reauthenticatePopupAndDeleteUser = () => {
+        setLoading(true);
+      
+        reauthenticateWithPopup(auth.currentUser, googleProvider)
+        .then(() => {
+            return deleteUser(user);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      };
 
     useEffect(()=>{
         const unsubscribe = onAuthStateChanged(auth, currentUser=>{
@@ -57,7 +86,10 @@ const AuthProvider = ({children}) => {
         signInUser,
         logOut,
         updateUserProfile,
-        sigInGoogle
+        sigInGoogle,
+        reauthenticateAndDeleteUser,
+        resetPassword,
+        reauthenticatePopupAndDeleteUser
     }
 
     return (
