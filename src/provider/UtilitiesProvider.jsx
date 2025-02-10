@@ -6,7 +6,7 @@ export const UtilitiesContext = createContext(null);
 const UtilitiesProvider = ({ children }) => {
 
   const [sideView, setSideView] = useState('chats')
-  const [content, setContent] = useState('welcome')
+  const [content, setContent] = useState(window.innerWidth > 768 ? 'welcome' : '');
   const [myProfile, setMyProfile] = useState(false);
   
   const utilities = {sideView, setSideView, content, setContent, myProfile, setMyProfile};

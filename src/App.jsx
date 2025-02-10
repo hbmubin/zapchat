@@ -16,7 +16,7 @@ function App() {
 
   return (
     <div className="flex h-screen">
-      <div className={` side-view w-96 flex flex-col h-full`}>
+      <div className={`${content === "chatDetails" ? "md:w-96 w-0" : "md:w-96 w-screen"} overflow-hidden duration-200 side-view  flex flex-col h-full`}>
         {myProfile ? (
           <MyProfile />
         ) : (

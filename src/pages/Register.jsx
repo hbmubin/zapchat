@@ -11,13 +11,14 @@ import { useForm } from "react-hook-form";
 import { AuthContext } from "../provider/AuthProvider";
 import { BounceLoader } from "react-spinners";
 import { sendEmailVerification } from "firebase/auth";
-// import userMan from '../assets/image/user-man.png'
+import useAxiosPublic from "../hooks/useAxiosPublic";
 
 const Register = () => {
   const { createUser, user, updateUserProfile, sigInGoogle } = useContext(AuthContext);
   const [showPass, setShowPass] = useState(false);
   const [onSubmitting, setOnSubmitting] = useState(false);
   const navigate = useNavigate();
+  const axiosPublic = useAxiosPublic();
   const {
     register,
     handleSubmit,
@@ -27,7 +28,7 @@ const Register = () => {
   } = useForm();
 
   useEffect(() => {
-    if (user && !onSubmitting) {
+    if (user && !onSubmitting && user.emailVerified) {
       Swal.fire({
         title: "You must logout first",
         icon: "warning",
@@ -37,110 +38,132 @@ const Register = () => {
         background: "#ede9fe",
       }).then((result) => {
         if (result.isConfirmed) {
-          navigate("/"); 
+          navigate("/");
         }
       });
     } else {
-      loadCaptchaEnginge(6); 
+      loadCaptchaEnginge(6);
     }
   }, [user, navigate, onSubmitting]);
 
-  const onSubmit = (data) => {
-    setOnSubmitting(true);
-    const captcha = data.captcha;
-    if (validateCaptcha(captcha)) {
-      createUser(data.email, data.password)
-        .then((result) => {
-          sendEmailVerification(result.user)
-          .then(()=>{
-            updateUserProfile(data.name, null)
-            .then(() => {
-              reset();
-              navigate("/");
-              Swal.fire({
-                title: "Registered successfully!",
-                icon: "success",
-                background: "#ede9fe",
-                showConfirmButton: false,
-                timer: 1500,
-              });
-            })
-            .catch((error) => {
-              reset();
-              navigate("/");
-              Swal.fire({
-                title: "Registered successfully!",
-                icon: "success",
-                background: "#ede9fe",
-                showConfirmButton: false,
-                timer: 1500,
-              });
-            });
-          })
-          .catch(error=>{
-            console.log(error);
-          setOnSubmitting(false);
-          Swal.fire({
-            title: "Registered successfully!",
-            icon: "success",
-            background: "#ede9fe",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          })
-        })
-        .catch((error) => {
-          console.log(error);
-          setOnSubmitting(false);
-          Swal.fire({
-            title: "error",
-            text: error.code || "something went wrong",
-            icon: "error",
-            background: "#ede9fe",
-            confirmButtonColor: "#6d28d9",
-          });
+  const onSubmit = async (data) => {
+    try {
+      setOnSubmitting(true);
+  
+      if (!validateCaptcha(data.captcha)) {
+        setError("captcha", {
+          type: "manual",
+          message: "Invalid captcha",
         });
-    } else {
-      setError("captcha", {
-        type: "manual",
-        message: "Invalid captcha",
+        setOnSubmitting(false);
+        return;
+      }
+  
+      // Create user account
+      const result = await createUser(data.email, data.password);
+      await sendEmailVerification(result.user);
+      await updateUserProfile(data.name, null);
+  
+      // Save user info in the database
+      const userInfo = {
+        photoUrl: null,
+        userId: result.user.uid,
+        name: data.name,
+        email: data.email,
+        status: "active",
+        lastLogin: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        friends: [],
+        request: [],
+        sent: [],
+      };
+  
+      await axiosPublic.post("/users", userInfo);
+  
+      // Reset form and navigate
+      reset();
+      navigate("/");
+      
+      Swal.fire({
+        title: "Registered successfully!",
+        icon: "success",
+        background: "#ede9fe",
+        showConfirmButton: false,
+        timer: 1500,
       });
+  
+    } catch (error) {
+      console.error(error);
       setOnSubmitting(false);
+  
+      Swal.fire({
+        title: "Error",
+        text: error.code || "Something went wrong",
+        icon: "error",
+        background: "#ede9fe",
+        confirmButtonColor: "#6d28d9",
+      });
     }
   };
+  
 
-
-  const handleGoogle = () =>{
-      setOnSubmitting(true)
-      sigInGoogle()
-      .then((result) =>{
-        navigate('/')
-        Swal.fire({
-          title: "Login successfully!",
-          icon: "success",
-          background: "#ede9fe",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-       })
-      .catch(error=>{
-        Swal.fire({
-          title: error.code || "Something went wrong",
-          icon: "error",
-          background: "#ede9fe",
-          confirmButtonColor: "#6d28d9",
-        });
-        setOnSubmitting(false)})
+  const handleGoogle = async () => {
+    try {
+      setOnSubmitting(true);
+  
+      const result = await sigInGoogle();
+      const user = result.user;
+  
+      // Prepare user info
+      const userInfo = {
+        photoUrl: user.photoURL,
+        userId: user.uid,
+        name: user.displayName,
+        email: user.email,
+        status: "active",
+        lastLogin: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        friends: [],
+        request: [],
+        sent: [],
+      };
+  
+      // Save user info in the database
+      await axiosPublic.post("/users", userInfo);
+  
+      // Navigate and show success message
+      navigate("/");
+      Swal.fire({
+        title: "Login successfully!",
+        icon: "success",
+        background: "#ede9fe",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+  
+    } catch (error) {
+      console.error(error);
+      setOnSubmitting(false);
+  
+      Swal.fire({
+        title: error.code || "Something went wrong",
+        icon: "error",
+        background: "#ede9fe",
+        confirmButtonColor: "#6d28d9",
+      });
     }
-
+  };
+  
 
   return (
-    <div className="bg-deepPink h-screen w-screen grid place-content-center">
-      <div className="backdrop-blur-sm bg-white/5 py-10 px-16 border-2 border-neutral-500/70 rounded-md">
-        <div className="grid grid-cols-2">
-          <div className="text-center flex flex-col justify-center items-center">
-            <div className="flex justify-center mb-6">
-              <LazyLoadImage className="w-44" src={logo} />
+    <div className="bg-deepPink sm:h-screen w-screen grid place-content-center">
+      <div className="backdrop-blur-sm bg-white/5 py-10 sm:px-16 px-3 sm:my-0 my-6 border-2 border-neutral-500/70 rounded-md">
+        <div className="grid sm:grid-cols-2">
+          <div className="text-center flex flex-col justify-center items-center sm:mb-0 mb-6">
+            <div className="flex justify-center sm:mb-6">
+              <LazyLoadImage className="sm:w-44 w-32" src={logo} />
             </div>
             <div className="font-light mb-2">Welcome to</div>
             <div className="roboto font-semibold text-4xl">ZapChat</div>
@@ -212,7 +235,10 @@ const Register = () => {
                 </Link>
               </div>
               <div className="mb-2">or</div>
-              <div onClick={handleGoogle} className="flex items-center justify-center w-full border-2 border-neutral-500/70 rounded-md py-2.5 px-3 cursor-pointer gap-3 bg-deepPink hover:bg-mediumPink active:scale-[.98] duration-100">
+              <div
+                onClick={handleGoogle}
+                className="flex items-center justify-center w-full border-2 border-neutral-500/70 rounded-md py-2.5 px-3 cursor-pointer gap-3 bg-deepPink hover:bg-mediumPink active:scale-[.98] duration-100"
+              >
                 <FcGoogle size={20} />
                 <div>Sign in with Google</div>
               </div>

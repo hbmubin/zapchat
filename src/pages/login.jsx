@@ -9,11 +9,13 @@ import { FcGoogle } from "react-icons/fc";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../provider/AuthProvider";
 import { BounceLoader } from "react-spinners";
+import useAxiosPublic from "../hooks/useAxiosPublic";
 
 const Login = () => {
   const { signInUser, user, sigInGoogle } = useContext(AuthContext);
   const [showPass, setShowPass] = useState(false);
   const [onSubmitting, setOnSubmitting] = useState(false)
+  const axiosPublic = useAxiosPublic();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.pathname || '/';
@@ -26,7 +28,7 @@ const Login = () => {
 
 
   useEffect(() => {
-      if (user && !onSubmitting) {
+      if (user && !onSubmitting && user.emailVerified) {
         Swal.fire({
           title: "You must logout first",
           icon: "warning",
@@ -42,12 +44,15 @@ const Login = () => {
       }
     }, [user, navigate, onSubmitting]);
 
-  const onSubmit = (data) => {
-    setOnSubmitting(true)
-    signInUser(data.email, data.password)
-      .then((result) => {
-        reset()
-        navigate(from, {replace:true});
+    const onSubmit = async (data) => {
+      try {
+        setOnSubmitting(true);
+    
+        await signInUser(data.email, data.password);
+    
+        reset();
+        navigate(from, { replace: true });
+    
         Swal.fire({
           title: "Login successfully!",
           icon: "success",
@@ -55,45 +60,73 @@ const Login = () => {
           showConfirmButton: false,
           timer: 1500,
         });
-      })
-      .catch((error) => {
-        setOnSubmitting(false)
+    
+      } catch (error) {
+        console.error(error);
+        setOnSubmitting(false);
+    
         Swal.fire({
-          title: error.code || 'Something went wrong',
+          title: error.code || "Something went wrong",
           icon: "error",
           background: "#ede9fe",
           confirmButtonColor: "#6d28d9",
         });
-      });
-  };
+      }
+    };
+    
 
 
-  const handleGoogle = () =>{
-    setOnSubmitting(true)
-    sigInGoogle()
-    .then((result) =>{
-      navigate('/')
-      Swal.fire({
-        title: "Login successfully!",
-        icon: "success",
-        background: "#ede9fe",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-     })
-    .catch(error=>{
-      Swal.fire({
-        title: error.code || "Something went wrong",
-        icon: "error",
-        background: "#ede9fe",
-        confirmButtonColor: "#6d28d9",
-      });
-      setOnSubmitting(false)})
+  const handleGoogle = async() =>{
+    try {
+          setOnSubmitting(true);
+      
+          const result = await sigInGoogle();
+          const user = result.user;
+      
+          // Prepare user info
+          const userInfo = {
+            photoUrl: null,
+            userId: user.uid,
+            name: user.displayName,
+            email: user.email,
+            status: "active",
+            lastLogin: new Date(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            friends: [],
+            request: [],
+            sent: [],
+          };
+      
+          // Save user info in the database
+          await axiosPublic.post("/users", userInfo);
+      
+          // Navigate and show success message
+          navigate("/");
+          Swal.fire({
+            title: "Login successfully!",
+            icon: "success",
+            background: "#ede9fe",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+      
+        } catch (error) {
+          console.error(error);
+          setOnSubmitting(false);
+      
+          Swal.fire({
+            title: error.code || "Something went wrong",
+            icon: "error",
+            background: "#ede9fe",
+            confirmButtonColor: "#6d28d9",
+          });
+        }
   }
 
   return (
-    <div className="bg-deepPink h-screen w-screen grid place-content-center">
-      <div className="backdrop-blur-sm bg-white/5 py-10 px-16 border-2 border-neutral-500/70 rounded-md">
+    <div className="bg-deepPink sm:h-screen w-screen grid place-content-center">
+      <div className="backdrop-blur-sm bg-white/5 py-10 sm:my-0 my-6  sm:px-16 px-3  border-2 border-neutral-500/70 rounded-md">
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex justify-center">
             <LazyLoadImage className="w-32" src={logo} alt="logo" />

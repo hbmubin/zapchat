@@ -6,6 +6,7 @@ import { UtilitiesContext } from "../provider/UtilitiesProvider";
 import { AuthContext } from "../provider/AuthProvider"
 import Swal from "sweetalert2";
 import userMan from '../assets/image/user-man.png'
+import useMyInfo from "../hooks/useMyInfo";
 
 
 const TopUser = () => {
@@ -13,7 +14,8 @@ const TopUser = () => {
     const [focus, setFocus] = useState(false);
     const dropdownRef = useRef(null); 
     const { setMyProfile } = useContext(UtilitiesContext);
-    const {logOut, user} = useContext(AuthContext)
+    const {logOut} = useContext(AuthContext)
+    const {myInfo} = useMyInfo()
 
     const handleLogOut =()=>{
       logOut()
@@ -49,15 +51,14 @@ const TopUser = () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
-
     return (
       <div className="bg-deepPink px-8 py-5 border-b border-neutral-800">
         <div className="flex items-center gap-2">
           <div onClick={()=>setMyProfile(true)} className="flex-grow flex items-center gap-3 cursor-pointer rounded-full active:bg-[#290d3d] py-1 pl-1 active:scale-[0.98] duration-200">
             <div className="size-10 rounded-full overflow-hidden">
-              <LazyLoadImage className="w-full" src={user?.photoURL || userMan} alt={user.displayName} />
+              <LazyLoadImage referrerPolicy="no-referrer" className="size-full object-cover object-center" src={myInfo?.photoURL || userMan} alt={myInfo?.name} />
             </div>
-            <div>{user?.displayName}</div>
+            <div>{myInfo?.name}</div>
           </div>
           <div ref={dropdownRef} className="relative">
             <button onClick={() => setOpen(!open)} className="text-lightPink default-btn">

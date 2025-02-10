@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { BiSolidSend } from "react-icons/bi";
 import { BsFillHandThumbsUpFill, BsThreeDotsVertical } from "react-icons/bs";
-import { MdAddPhotoAlternate } from "react-icons/md";
+import { MdAddPhotoAlternate, MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import UserDetails from "./UserDetails";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { UtilitiesContext } from "../provider/UtilitiesProvider";
 
 const messages = [
   {
@@ -128,6 +129,7 @@ const ChatDetails = () => {
   const dropdownRef = useRef(null);
   const [openDropdown, setOpenDropdown] = useState(false);
   const [userDetails, setUserDetails] = useState(false);
+  const { sideView, setContent, myProfile } = useContext(UtilitiesContext);
 
   const handleIconClick = () => {
     fileInputRef.current.click();
@@ -156,7 +158,8 @@ const ChatDetails = () => {
   return (
     <div className="flex-grow flex overflow-hidden">
       <div className="flex-grow flex flex-col h-full">
-        <div className="flex items-center bg-white px-8 py-3 shadow">
+        <div className="flex items-center bg-white md:px-8 px-2 py-3 shadow">
+          <span onClick={()=>setContent('')} className="text-neutral-700 px-1 md:hidden default-btn"><MdOutlineKeyboardArrowLeft size={36} /></span>
           <div className="flex-grow">
             <div onClick={()=>setUserDetails(true)} className="flex w-fit items-center gap-3 active:scale-[0.997] duration-200 cursor-pointer">
               <div className="size-12 relative">
@@ -239,7 +242,7 @@ const ChatDetails = () => {
           </div>
         </div>
       </div>
-      <div className={`${userDetails ? 'w-4/12 min-w-44' : 'w-0'} duration-200 overflow-hidden`}>
+      <div className={`${userDetails ? 'lg:w-4/12 w-screen h-screen lg:static fixed top-0 right-0 min-w-44' : 'w-0'} duration-200 overflow-hidden`}>
         <UserDetails setUserDetails={setUserDetails}/>
       </div>
     </div>

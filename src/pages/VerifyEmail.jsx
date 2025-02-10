@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import logo from "../assets/image/zapchatlogo.png";
 import { AuthContext } from "../provider/AuthProvider";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { sendEmailVerification } from "firebase/auth";
 import Swal from "sweetalert2";
 import { BounceLoader } from "react-spinners";
@@ -51,9 +51,12 @@ const VerifyEmail = () => {
           Refresh
         </button>
         <span className="text-gray-400">or</span>
+        <div className="flex items-center gap-5">
         <button onClick={resendVerificationEmail} className="text-indigo-600 hover:text-indigo-800 font-medium default-btn">
         {onSubmitting ? <BounceLoader size={24} color="#6d28d9" /> : "Resend Email"}
         </button>
+        <Link to="/login" className="text-indigo-600 hover:text-indigo-800 font-medium">Login</Link>
+        </div>
       </div>
     </div>
   );

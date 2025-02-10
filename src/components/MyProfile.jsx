@@ -12,27 +12,45 @@ import { Link } from "react-router-dom";
 import userMan from '../assets/image/user-man.png'
 import { BounceLoader } from "react-spinners";
 import { toast, ToastContainer } from "react-toastify";
+import useAxiosPublic from "../hooks/useAxiosPublic";
+import useAxiosSecure from "../hooks/useAxiosSecure";
+import useMyInfo from "../hooks/useMyInfo";
 
 const image_hosting_key= import.meta.env.VITE_IMAGE_HOSTING_KEY
 const image_hosting_url= `https://api.imgbb.com/1/upload?key=${image_hosting_key}`
 
 const MyProfile = () => {
   const { setMyProfile } = useContext(UtilitiesContext);
-  const {logOut, reauthenticateAndDeleteUser, user, updateUserProfile, reauthenticatePopupAndDeleteUser} = useContext(AuthContext)
+  const {myInfo} = useMyInfo()
+  const {logOut, reauthenticateAndDeleteUser, user, reauthenticatePopupAndDeleteUser} = useContext(AuthContext)
   const [nameEdit, setNameEdit] = useState(false);
   const [aboutEdit, setAboutEdit] = useState(false);
   const textAreaRef = useRef();
   const nameRef = useRef();
-  const [previewImage, setPreviewImage] = useState(user?.photoURL);
+  const [previewImage, setPreviewImage] = useState(myInfo.photoURL || userMan);
+  const [previewName, setPreviewName] = useState("");
+  const [previewDes, setPreviewDes] = useState("");
   const [onImgSubmitting, setOnImgSubmitting] = useState(false)
   const [onNameSubmitting, setOnNameSubmitting] = useState(false)
+  const [onDesSubmitting, setOnDesSubmitting] = useState(false)
+  const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
 
   useEffect(() => {
     if (textAreaRef.current) {
       textAreaRef.current.style.height = "auto";
       textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
     }
-  }, []);
+    if(myInfo.photoURL){
+      setPreviewImage(myInfo.photoURL)
+    }
+    if(myInfo.name){
+      setPreviewName(myInfo.name)
+    }
+    if(myInfo.des){
+      setPreviewDes(myInfo.des)
+    }
+  }, [myInfo.name, myInfo.des, myInfo.photoURL]);
 
   const handleLogOut =()=>{
         logOut()
@@ -51,72 +69,62 @@ const MyProfile = () => {
         });
       }
 
-      const handleDeleteUser = () =>{
-        Swal.fire({
-          title: user.providerData[0]?.providerId === "google.com" ? "Reauthenticate with Google" : "Re-enter your password",
-          text: user.providerData[0]?.providerId === "google.com" ? "You need to reauthenticate using Google to delete your profile." : "Enter your password to delete profile",
-          input: user.providerData[0]?.providerId === "google.com" ? undefined : "password",
-          inputLabel: user.providerData[0]?.providerId === "google.com" ? undefined : "Password",
-          inputPlaceholder: user.providerData[0]?.providerId === "google.com" ? undefined : "Password",
-          inputAttributes: {
-            autocapitalize: "off",
-            autocorrect: "off",
-          },
-          background: "#ede9fe",
-          confirmButtonColor: "#6d28d9",
-          showCancelButton: true,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            if (user.providerData[0]?.providerId === "google.com"){
-              reauthenticatePopupAndDeleteUser()
-              .then(() => {
-                Swal.fire({
-                  title: "Deleted!",
-                  text: "Your profile has been deleted.",
-                  icon: "success",
-                  background: "#ede9fe",
-                  showConfirmButton: false,
-                  timer: 1500,
-                });
-              })
-              .catch((error) => {
-                console.error(error);
-                Swal.fire({
-                  title: error.code || "Something went wrong",
-                  icon: "error",
-                  background: "#ede9fe",
-                  showConfirmButton: false,
-                  timer: 1500,
-                });
-              });
-            }
-            else{
-              reauthenticateAndDeleteUser(result.value)
-              .then(() => {
-                Swal.fire({
-                  title: "Deleted!",
-                  text: "Your profile has been deleted.",
-                  icon: "success",
-                  background: "#ede9fe",
-                  showConfirmButton: false,
-                  timer: 1500,
-                });
-              })
-              .catch((error) => {
-                console.error(error);
-                Swal.fire({
-                  title: error.code || "Something went wrong",
-                  icon: "error",
-                  background: "#ede9fe",
-                  showConfirmButton: false,
-                  timer: 1500,
-                });
-              });
-            }
-            
+      const handleDeleteUser = async () => {
+        try {
+          const isGoogleUser = user.providerData[0]?.providerId === "google.com";
+      
+          // Show confirmation prompt
+          const { isConfirmed, value } = await Swal.fire({
+            title: isGoogleUser ? "Reauthenticate with Google" : "Re-enter your password",
+            text: isGoogleUser 
+              ? "You need to reauthenticate using Google to delete your profile." 
+              : "Enter your password to delete profile",
+            input: isGoogleUser ? undefined : "password",
+            inputLabel: isGoogleUser ? undefined : "Password",
+            inputPlaceholder: isGoogleUser ? undefined : "Password",
+            inputAttributes: {
+              autocapitalize: "off",
+              autocorrect: "off",
+            },
+            background: "#ede9fe",
+            confirmButtonColor: "#6d28d9",
+            showCancelButton: true,
+          });
+      
+          if (!isConfirmed) return;
+      
+          // Reauthenticate and delete user
+          if (isGoogleUser) {
+            await reauthenticatePopupAndDeleteUser();
+          } else {
+            await reauthenticateAndDeleteUser(value);
           }
-        });
-      }
+      
+          // Delete user from the database
+          await axiosPublic.delete(`users/${user.uid}`)
+      
+          // Show success message
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your profile has been deleted.",
+            icon: "success",
+            background: "#ede9fe",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+      
+        } catch (error) {
+          console.error(error);
+          Swal.fire({
+            title: error.code || "Something went wrong",
+            icon: "error",
+            background: "#ede9fe",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
+      };
+      
 
 
       const handleImageChange = async(e) => {
@@ -132,13 +140,13 @@ const MyProfile = () => {
         const imageUrl = imageData.data.url
 
         if (imageData.success) {
-          updateUserProfile( user.displayName, imageUrl)
+          axiosSecure.patch(`my-info/image/${user.uid}`, { photoURL: imageUrl })
           .then(result=>{
-            toast.success('Successfully uploaded!')
             setPreviewImage(imageUrl)
+            toast.success('Successfully uploaded!')
           })
           .catch(error=>{
-            toast.success( error.code|| 'Something went wrong!')
+            toast.error( error.code || 'Something went wrong!')
           })
         } else {
           toast.success( 'Something went wrong!')
@@ -150,16 +158,31 @@ const MyProfile = () => {
         const name = nameRef.current.value
         setNameEdit(false)
         setOnNameSubmitting(true)
-        if(user.displayName != name){
-          updateUserProfile( name, user?.photoURL)
+        if(myInfo.name != name){
+          axiosSecure.patch(`my-info/name/${user.uid}`, { name })
           .then(result=>{
-            toast.success('Successfully uploaded!')
+            toast.success('Successfully updated!')
           })
           .catch(error=>{
-            toast.success( error.code|| 'Something went wrong!')
+            toast.error( error.code || 'Something went wrong!')
           })
         }
         setOnNameSubmitting(false)
+      }
+      const handleAboutChange= () =>{
+        const des = textAreaRef.current.value
+        setAboutEdit(false)
+        setOnDesSubmitting(true)
+        if(myInfo.des != des){
+          axiosSecure.patch(`my-info/des/${user.uid}`, { des })
+          .then(result=>{
+            toast.success('Successfully updated!')
+          })
+          .catch(error=>{
+            toast.error( error.code || 'Something went wrong!')
+          })
+        }
+        setOnDesSubmitting(false)
       }
 
   return (
@@ -187,14 +210,14 @@ const MyProfile = () => {
                   <BounceLoader size={50} color="#6d28d9" />
                 </div>
               )}
-              <LazyLoadImage className="size-full object-cover" src={previewImage || userMan} alt={user.displayName} />
+              <LazyLoadImage referrerPolicy="no-referrer" className="size-full object-cover" src={previewImage} alt={user.displayName} />
             </div>
             <div className="mt-5 text-neutral-400">{user.email}</div>
           </div>
           <div className="mt-6 text-small mb-2">Your Name</div>
           <div>
             <div className={`${nameEdit && "border-b"} w-full flex gap-1 py-1`}>
-              <input maxLength={25} minLength={6} ref={nameRef} className="bg-deepPink outline-none flex-grow " readOnly={!nameEdit} type="text" defaultValue={user?.displayName} />
+              <input maxLength={25} minLength={6} ref={nameRef} className="bg-deepPink outline-none flex-grow " readOnly={!nameEdit} type="text" defaultValue={previewName} />
                 {nameEdit ? <div className="cursor-pointer h-min default-btn w-min default-btn active:text-neutral-400 duration-100" onClick={ handleNameChange}><ImCheckmark size={15} /></div> : <div onClick={()=>{if(!onNameSubmitting){setNameEdit(true)}}} className="cursor-pointer h-min default-btn w-min default-btn active:text-neutral-400 duration-100"><TbEdit size={20} /></div>}
             </div>
           </div>
@@ -205,7 +228,7 @@ const MyProfile = () => {
                 className="bg-deepPink outline-none flex-grow resize-none overflow-hidden"
                 readOnly={!aboutEdit}
                 type="text"
-                defaultValue="Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, minus! Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, minus!Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, minus!Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, minus!"
+                defaultValue={previewDes}
                 onInput={(e) => {
                   e.target.style.height = "auto";
                   e.target.style.height = `${e.target.scrollHeight}px`;
@@ -214,7 +237,7 @@ const MyProfile = () => {
                 ref={textAreaRef}
               />
               <div className="cursor-pointer h-min default-btn w-min active:text-neutral-400 duration-100" onClick={() => setAboutEdit(!aboutEdit)}>
-                {aboutEdit ? <ImCheckmark size={15} /> : <TbEdit size={20} />}
+              {aboutEdit ? <div className="cursor-pointer h-min default-btn w-min default-btn active:text-neutral-400 duration-100" onClick={ handleAboutChange}><ImCheckmark size={15} /></div> : <div onClick={()=>{if(!onDesSubmitting){setAboutEdit(true)}}} className="cursor-pointer h-min default-btn w-min default-btn active:text-neutral-400 duration-100"><TbEdit size={20} /></div>}
               </div>
             </div>
           </div>
