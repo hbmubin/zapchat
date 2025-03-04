@@ -96,6 +96,7 @@ const Login = () => {
             friends: [],
             request: [],
             sent: [],
+            lastMessage: null,
           };
       
           // Save user info in the database

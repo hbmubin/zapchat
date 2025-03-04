@@ -77,6 +77,7 @@ const Register = () => {
         friends: [],
         request: [],
         sent: [],
+        lastMessage: null,
       };
   
       await axiosPublic.post("/users", userInfo);
@@ -128,6 +129,7 @@ const Register = () => {
         friends: [],
         request: [],
         sent: [],
+        lastMessage: null,
       };
   
       // Save user info in the database

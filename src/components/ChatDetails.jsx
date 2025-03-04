@@ -5,123 +5,8 @@ import { MdAddPhotoAlternate, MdOutlineKeyboardArrowLeft } from "react-icons/md"
 import UserDetails from "./UserDetails";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { UtilitiesContext } from "../provider/UtilitiesProvider";
-
-const messages = [
-  {
-    you: {
-      text: "Hey, how are you?",
-      time: "2025-01-18, Saturday, 10:15 AM",
-    },
-  },
-  {
-    he: {
-      text: "I'm good, thanks! How about you?",
-      time: "2025-01-18, Saturday, 10:16 AM",
-    },
-  },
-  {
-    you: {
-      text: "Doing great! Are we still on for the meeting later?",
-      time: "2025-01-18, Saturday, 10:17 AM",
-    },
-  },
-  {
-    he: {
-      text: "Yes, let's meet at 3 PM.",
-      time: "2025-01-18, Saturday, 10:18 AM",
-    },
-  },
-  {
-    you: {
-      text: "Doing great! Are we still on for the meeting later?",
-      time: "2025-01-18, Saturday, 10:17 AM",
-    },
-  },
-  {
-    he: {
-      text: "Yes, let's meet at 3 PM.",
-      time: "2025-01-18, Saturday, 10:18 AM",
-    },
-  },
-  {
-    you: {
-      text: "Doing great! Are we still on for the meeting later?",
-      time: "2025-01-18, Saturday, 10:17 AM",
-    },
-  },
-  {
-    he: {
-      text: "Yes, let's meet at 3 PM.",
-      time: "2025-01-18, Saturday, 10:18 AM",
-    },
-  },
-  {
-    you: {
-      text: "Doing great! Are we still on for the meeting later?",
-      time: "2025-01-18, Saturday, 10:17 AM",
-    },
-  },
-  {
-    he: {
-      text: "Yes, let's meet at 3 PM.",
-      time: "2025-01-18, Saturday, 10:18 AM",
-    },
-  },
-  {
-    you: {
-      text: "Doing great! Are we still on for the meeting later?",
-      time: "2025-01-18, Saturday, 10:17 AM",
-    },
-  },
-  {
-    he: {
-      text: "Yes, let's meet at 3 PM.",
-      time: "2025-01-18, Saturday, 10:18 AM",
-    },
-  },
-  {
-    you: {
-      text: "Doing great! Are we still on for the meeting later?",
-      time: "2025-01-18, Saturday, 10:17 AM",
-    },
-  },
-  {
-    he: {
-      text: "Yes, let's meet at 3 PM.",
-      time: "2025-01-18, Saturday, 10:18 AM",
-    },
-  },
-  {
-    you: {
-      text: "Doing great! Are we still on for the meeting later?",
-      time: "2025-01-18, Saturday, 10:17 AM",
-    },
-  },
-  {
-    he: {
-      text: "Yes, let's meet at 3 PM.",
-      time: "2025-01-18, Saturday, 10:18 AM",
-    },
-  },
-  {
-    you: {
-      text: "Doing great! Are we still on for the meeting later?",
-      time: "2025-01-18, Saturday, 10:17 AM",
-    },
-  },
-  {
-    he: {
-      text: "Yes, let's meet at 3 PM.",
-      time: "2025-01-18, Saturday, 10:18 AM",
-    },
-  },
-  {
-    you: {
-      text: "Doing great! Are we still on for the meeting later?",
-      time: "2025-01-18, Saturday, 10:17 AM",
-    },
-  },
-];
+import userImg from "../assets/image/user-man.png";
+import useMyInfo from "../hooks/useMyInfo";
 
 const ChatDetails = () => {
   const fileInputRef = useRef(null);
@@ -129,7 +14,9 @@ const ChatDetails = () => {
   const dropdownRef = useRef(null);
   const [openDropdown, setOpenDropdown] = useState(false);
   const [userDetails, setUserDetails] = useState(false);
-  const { sideView, setContent, myProfile } = useContext(UtilitiesContext);
+  const {myInfo} =  useMyInfo()
+  const { sideView, setContent, myProfile, conversation } = useContext(UtilitiesContext);
+  console.log(conversation.chat);
 
   const handleIconClick = () => {
     fileInputRef.current.click();
@@ -155,19 +42,31 @@ const ChatDetails = () => {
     };
   }, []);
 
+  // {conversation?.chat?.messages.map((message, index) => (
+  //   <div key={index} className="flex flex-col gap-1 px-8 py-3">
+  //     <div className={`flex ${message.memberId !== conversation.userInfo.userId ? "justify-end" : "justify-start"} w-full`}>
+  //       <span className={`px-4 py-2.5 leading-none inline-block w-fit rounded-3xl text-white ${message.memberId === currentUserId ? "bg-mediumPink" : "bg-blue-500"}`}>
+  //         {message.body}
+  //       </span>
+  //     </div>
+  //   </div>
+  // ))}
+
   return (
     <div className="flex-grow flex overflow-hidden">
       <div className="flex-grow flex flex-col h-full">
         <div className="flex items-center bg-white md:px-8 px-2 py-3 shadow">
-          <span onClick={()=>setContent('')} className="text-neutral-700 px-1 md:hidden default-btn"><MdOutlineKeyboardArrowLeft size={36} /></span>
+          <span onClick={() => setContent("")} className="text-neutral-700 px-1 md:hidden default-btn">
+            <MdOutlineKeyboardArrowLeft size={36} />
+          </span>
           <div className="flex-grow">
-            <div onClick={()=>setUserDetails(true)} className="flex w-fit items-center gap-3 active:scale-[0.997] duration-200 cursor-pointer">
+            <div onClick={() => setUserDetails(true)} className="flex w-fit items-center gap-3 active:scale-[0.997] duration-200 cursor-pointer">
               <div className="size-12 relative">
-                <LazyLoadImage className="size-full object-cover rounded-full" src="https://random.imagecdn.app/300/300" alt="" />
+                <LazyLoadImage className="size-full object-cover rounded-full" src={conversation?.userInfo.photoURL || userImg} alt={conversation?.userInfo.name} />
                 <div className="absolute bottom-0 right-0 size-4 rounded-full bg-green-500 border-[3px] border-white"></div>
               </div>
               <div>
-                <div className="font-semibold text-lg text-neutral-600">Hasanul Banna Mubin</div>
+                <div className="font-semibold text-lg text-neutral-600">{conversation?.userInfo.name}</div>
               </div>
             </div>
           </div>
@@ -207,10 +106,16 @@ const ChatDetails = () => {
         </div>
         <div className="bg-lightPink flex-grow flex flex-col w-full justify-end overflow-hidden">
           <div className="overflow-y-auto py-5">
-            {messages?.map((message, index) => (
+            {conversation?.chat?.messages.map((message, index) => (
               <div key={index} className="flex flex-col gap-1 px-8 py-3">
-                <div className={`flex ${message.you ? "justify-end" : "justify-start"} w-full`}>
-                  <span className={`px-4 py-2.5 leading-none inline-block w-fit rounded-3xl text-white ${message.you ? "bg-mediumPink" : "bg-blue-500"}`}>{message.you?.text || message.he?.text}</span>
+                <div className={`flex ${message.memberId !== conversation.userInfo.userId ? "justify-end" : "justify-start"} w-full`}>
+                  <div className="flex items-center gap-2">
+                  {message.memberId == conversation.userInfo.userId && <figure className="size-6 rounded-full overflow-hidden"><LazyLoadImage className="size-full object-cover object-center" src={conversation?.userInfo?.photoURL} alt="" /></figure>}
+                  <span className={`px-4 py-2.5 leading-none inline-block w-fit rounded-3xl text-white ${message.memberId !== conversation.userInfo.userId ? "bg-mediumPink" : "bg-blue-500"}`}>
+                    {message.body}
+                  </span>
+                  {message.memberId !== conversation.userInfo.userId && <figure className="size-6 rounded-full overflow-hidden"><LazyLoadImage className="size-full object-cover object-center" src={myInfo?.photoURL} alt="" /></figure>}
+                  </div>
                 </div>
               </div>
             ))}
@@ -242,8 +147,8 @@ const ChatDetails = () => {
           </div>
         </div>
       </div>
-      <div className={`${userDetails ? 'lg:w-4/12 w-screen h-screen lg:static fixed top-0 right-0 min-w-44' : 'w-0'} duration-200 overflow-hidden`}>
-        <UserDetails setUserDetails={setUserDetails}/>
+      <div className={`${userDetails ? "lg:w-4/12 w-screen h-screen lg:static fixed top-0 right-0 min-w-44" : "w-0"} duration-200 overflow-hidden`}>
+        <UserDetails userInfo={conversation?.userInfo} setUserDetails={setUserDetails} />
       </div>
     </div>
   );

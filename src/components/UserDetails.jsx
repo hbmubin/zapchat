@@ -3,17 +3,18 @@ import { IoClose } from "react-icons/io5";
 import { MdBlock, MdDelete, MdOutlineReport, MdPersonAdd } from "react-icons/md";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-const UserDetails = ({setUserDetails}) => {
+const UserDetails = ({setUserDetails, userInfo}) => {
+    console.log(userInfo)
     return (
-        <div className="h-full bg-lightPink text-neutral-700 overflow-y-auto">
+        <div className="h-full bg-lightPink text-neutral-700 overflow-y-auto border-l border-violet-200">
             <div className="p-4 flex items-center gap-3 sticky top-0 bg-lightPink">
                 <div className="cursor-pointer default-btn" onClick={()=>setUserDetails(false)}><IoClose size={26} /></div>
                 <div className="text-lg font-medium">User info</div>
             </div>
             <div className="flex flex-col items-center py-10 border-b border-b-violet-200">
-                <div className="size-36 rounded-full overflow-hidden"><LazyLoadImage className="size-full object-cover rounded-full" src="https://random.imagecdn.app/500/300" alt="user-photo" /></div>
-                <div className="mt-4 mb-1 text-neutral-800 font-medium text-xl">Hasanul Banna</div>
-                <div>fhkhasnul@gmail.com</div>
+                <div className="size-36 rounded-full overflow-hidden"><LazyLoadImage className="size-full object-cover rounded-full" src={userInfo.photoURL} alt="user-photo" /></div>
+                <div className="mt-4 mb-1 text-neutral-800 font-medium text-xl">{userInfo.name}</div>
+                <div>{userInfo.email}</div>
             </div>
             <div className="px-4 py-2 border-b border-b-violet-200">
                 <div className="text-sm mb-1">About</div>
