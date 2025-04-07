@@ -7,6 +7,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { UtilitiesContext } from "../provider/UtilitiesProvider";
 import userImg from "../assets/image/user-man.png";
 import useMyInfo from "../hooks/useMyInfo";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const ChatDetails = () => {
   const fileInputRef = useRef(null);
@@ -15,8 +16,9 @@ const ChatDetails = () => {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [userDetails, setUserDetails] = useState(false);
   const {myInfo} =  useMyInfo()
+  const [textInput , setTextInput] = useState("");
   const { sideView, setContent, myProfile, conversation } = useContext(UtilitiesContext);
-  console.log(conversation.chat);
+  const axiosSecure = useAxiosSecure();
 
   const handleIconClick = () => {
     fileInputRef.current.click();
@@ -42,16 +44,22 @@ const ChatDetails = () => {
     };
   }, []);
 
-  // {conversation?.chat?.messages.map((message, index) => (
-  //   <div key={index} className="flex flex-col gap-1 px-8 py-3">
-  //     <div className={`flex ${message.memberId !== conversation.userInfo.userId ? "justify-end" : "justify-start"} w-full`}>
-  //       <span className={`px-4 py-2.5 leading-none inline-block w-fit rounded-3xl text-white ${message.memberId === currentUserId ? "bg-mediumPink" : "bg-blue-500"}`}>
-  //         {message.body}
-  //       </span>
-  //     </div>
-  //   </div>
-  // ))}
-
+const handleOnSendText = () =>{
+  const message = {
+    memberId: conversation.userInfo.userId,
+    body: textInput,
+    time: new Date().toISOString(),
+    type: "text",
+  }
+  axiosSecure.patch(`/chat/${conversation.chat._id}`, message)
+  .then(res => {
+    if (res.data.modifiedCount > 0) {
+      console.log("message sent");
+    }
+  })
+  .catch(err => console.log(err));
+  setTextInput("");
+}
   return (
     <div className="flex-grow flex overflow-hidden">
       <div className="flex-grow flex flex-col h-full">
@@ -108,13 +116,13 @@ const ChatDetails = () => {
           <div className="overflow-y-auto py-5">
             {conversation?.chat?.messages.map((message, index) => (
               <div key={index} className="flex flex-col gap-1 px-8 py-3">
-                <div className={`flex ${message.memberId !== conversation.userInfo.userId ? "justify-end" : "justify-start"} w-full`}>
+                <div className={`flex ${message.memberId === conversation.userInfo.userId ? "justify-end" : "justify-start"} w-full`}>
                   <div className="flex items-center gap-2">
-                  {message.memberId == conversation.userInfo.userId && <figure className="size-6 rounded-full overflow-hidden"><LazyLoadImage className="size-full object-cover object-center" src={conversation?.userInfo?.photoURL} alt="" /></figure>}
+                  {message.memberId == conversation.userInfo.userId && <figure className="size-6 rounded-full overflow-hidden"><LazyLoadImage className="size-full object-cover object-center" src={myInfo?.photoURL} alt="" /></figure>}
                   <span className={`px-4 py-2.5 leading-none inline-block w-fit rounded-3xl text-white ${message.memberId !== conversation.userInfo.userId ? "bg-mediumPink" : "bg-blue-500"}`}>
                     {message.body}
                   </span>
-                  {message.memberId !== conversation.userInfo.userId && <figure className="size-6 rounded-full overflow-hidden"><LazyLoadImage className="size-full object-cover object-center" src={myInfo?.photoURL} alt="" /></figure>}
+                  {message.memberId !== conversation.userInfo.userId && <figure className="size-6 rounded-full overflow-hidden"><LazyLoadImage className="size-full object-cover object-center" src={conversation?.userInfo?.photoURL} alt="" /></figure>}
                   </div>
                 </div>
               </div>
@@ -131,10 +139,12 @@ const ChatDetails = () => {
           </div>
           <div className="flex-grow flex items-center">
             <textarea
+            onChange={(e) => setTextInput(e.target.value)}
               onInput={(e) => {
                 e.target.style.height = "auto";
                 e.target.style.height = `${Math.min(e.target.scrollHeight, 5 * 1.5 * 16)}px`;
               }}
+              value={textInput}
               rows={1}
               className="w-full overflow-hidden outline-none message-box border rounded-2xl bg-[#f9f8ff] text-neutral-700 placeholder:text-neutral-700 resize-none px-4 py-2 placeholder:text-sm text-sm"
               placeholder="Type a message"
@@ -142,8 +152,7 @@ const ChatDetails = () => {
             />
           </div>
           <div className="text-mediumPink cursor-pointer">
-            <BiSolidSend size={26} />
-            {/* <BsFillHandThumbsUpFill size={24} /> */}
+            {textInput.length > 0 ? <span onClick={handleOnSendText}><BiSolidSend size={26} /></span> : <BsFillHandThumbsUpFill size={24} />}
           </div>
         </div>
       </div>

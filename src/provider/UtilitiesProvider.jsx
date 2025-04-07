@@ -9,8 +9,9 @@ const UtilitiesProvider = ({ children }) => {
   const [content, setContent] = useState(window.innerWidth > 768 ? 'welcome' : '');
   const [myProfile, setMyProfile] = useState(false);
   const [conversation, setConversation] = useState({});
+  const [search, setSearch] = useState('');
   
-  const utilities = {sideView, setSideView, content, setContent, myProfile, setMyProfile, conversation, setConversation};
+  const utilities = {sideView, setSideView, content, setContent, myProfile, setMyProfile, conversation, setConversation , search, setSearch};
   return (
     <UtilitiesContext.Provider value={utilities}>{children}</UtilitiesContext.Provider>
   );
