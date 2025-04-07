@@ -8,6 +8,7 @@ import { useContext } from "react";
 import { UtilitiesContext } from "./provider/UtilitiesProvider";
 import MyProfile from "./components/MyProfile";
 import useWidth from "./hooks/useWidth";
+import Peoples from "./components/Peoples";
 
 function App() {
   const { sideView, content, myProfile } = useContext(UtilitiesContext);
@@ -25,7 +26,7 @@ function App() {
             <div className="flex-grow bg-deepPink overflow-y-auto side-view-container">
               {sideView === "chats" && <Chats />}
               {sideView === "users" && <Users />}
-              {sideView === "groups" && <div>Groups</div>}
+              {sideView === "peoples" && <Peoples />}
             </div>
             <BottomNav />
           </>

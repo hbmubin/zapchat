@@ -4,7 +4,6 @@ import { MdBlock, MdDelete, MdOutlineReport, MdPersonAdd } from "react-icons/md"
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const UserDetails = ({setUserDetails, userInfo}) => {
-    console.log(userInfo)
     return (
         <div className="h-full bg-lightPink text-neutral-700 overflow-y-auto border-l border-violet-200">
             <div className="p-4 flex items-center gap-3 sticky top-0 bg-lightPink">

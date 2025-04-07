@@ -93,7 +93,7 @@ const TopUser = () => {
             onBlur={() => setFocus(false)}
             className={`bg-transparent outline-none flex-grow placeholder:text-sm placeholder:text-neutral-500 px-4 ${focus ? "-translate-x-5 duration-200" : "translate-x-0 duration-200"}`}
             type="text"
-            placeholder="Search for people or group"
+            placeholder="Search for people"
           />
         </div>
       </div>
